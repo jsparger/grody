@@ -22,13 +22,20 @@ parser.add_argument('value')
 
 @api.route("/pv/<name>")
 class ChannelAccess(Resource):
+
     def get(self, name):
-        value = epics.caget(name, timeout=2)
-        if value is None:
+        pv = epics.PV(name, auto_monitor=False)
+        pv.wait_for_connection()
+        if pv.connected is False:
             return ("PV not found.", 404)
-        return ({"value":value}, 200)
+        pv.get()
+        info = pv._args
+        print(info)
+        del info["chid"] # sometimes this is filled with a clong which is not serializable
+        pv.disconnect()
+        return (info, 200)
 
-
+    #TODO: probably this is all wrong. Does caput even throw an error?
     def put(self, name):
         args = parser.parse_args()
         try:
