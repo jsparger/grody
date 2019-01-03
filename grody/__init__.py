@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_restful import reqparse, Resource, Api
+from flask_cors import CORS
 import types
 import epics
 import json
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 # utility to allow route decorator on flask_restful Resource
 def api_route(self, *args, **kwargs):
