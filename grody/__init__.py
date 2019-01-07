@@ -30,7 +30,6 @@ class ChannelAccess(Resource):
             return ("PV not found.", 404)
         pv.get()
         info = pv._args
-        print(info)
         del info["chid"] # sometimes this is filled with a clong which is not serializable
         pv.disconnect()
         return (info, 200)
