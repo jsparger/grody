@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import reqparse, Resource, Api
 from flask_cors import CORS
 import types
@@ -34,14 +34,17 @@ class ChannelAccess(Resource):
         pv.disconnect()
         return (info, 200)
 
-    #TODO: probably this is all wrong. Does caput even throw an error?
-    def put(self, name):
-        args = parser.parse_args()
+    def post(self, name):
+        # print("Somebody is trying to PUT to name")
         try:
-            value = args["value"]
+            # data = request.text
+            data = request.get_json()
+            epics.caput(name, data["value"])
+            return (data, 200)
         except ValueError:
             return ("Value is not valid.", 404)
-        try:
-            epics.caput(name, value)
-        except Exception as e:
-            return ("PV name not valid.", 404)
+        return ("okay", 200)
+        # try:
+        #     epics.caput(name, value)
+        # except Exception as e:
+        #     return ("PV name not valid.", 404)
